@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>لمى الحربي · أهتدي بالبيانات</title>
+<meta name="description" content="Lama Alharbi — Data Science student, University of Jeddah. An interactive data journey portfolio.">
+<meta property="og:title" content="لمى الحربي · أهتدي بالبيانات | Lama Alharbi · Guided by Data">
+<meta property="og:description" content="ملف أعمالي كرحلة تفاعلية تحت سماء نجد · An interactive data science portfolio">
+<meta property="og:image" content="https://lama-alh.github.io/map.jpg">
+<meta property="og:url" content="https://lama-alh.github.io/">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#12142b">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600&family=Cormorant+Garamond:wght@600;700&display=swap" rel="stylesheet">
+<style>
+  :root{--ink:#12142b;--panel:#1a1d3a;--sand:#f6e7c8;--gold:#ffd88a;--teal:#7fe0d4;--muted:#c9c4d8;--line:rgba(246,231,200,.16);--focus:#ffe08a}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:radial-gradient(ellipse at top,#1b1e40 0%,var(--ink) 60%);color:var(--sand);font-family:"IBM Plex Sans Arabic",system-ui,sans-serif;display:flex;flex-direction:column;align-items:center;padding:16px;min-height:100vh;overflow-x:hidden;line-height:1.6}
+  .serif{font-family:"Amiri","Cormorant Garamond",serif}
+  html[lang=en] .serif{font-family:"Cormorant Garamond","Amiri",serif}
+  html[lang=ar] [lang=en]{display:none!important}
+  html[lang=en] [lang=ar]{display:none!important}
+  .sr{position:absolute!important;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+  :focus-visible{outline:3px solid var(--focus);outline-offset:3px;border-radius:8px}
+  .skip{position:absolute;top:-60px;inset-inline-start:16px;background:var(--gold);color:var(--ink);padding:8px 14px;border-radius:8px;font-weight:600;z-index:50;text-decoration:none}
+  .skip:focus{top:12px}
+
+  header{width:100%;max-width:1400px;display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;gap:12px;flex-wrap:wrap}
+  .brand h1{font-size:clamp(22px,2.8vw,34px);font-weight:700;line-height:1.2;text-shadow:0 0 14px rgba(255,200,110,.35)}
+  .brand p{font-size:clamp(13px,1.1vw,15px);color:var(--muted)}
+  .tools{display:flex;align-items:center;gap:14px}
+  .progress{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted)}
+  .progress ol{display:flex;gap:5px;list-style:none}
+  .progress li{width:14px;height:14px;clip-path:polygon(50% 0,61% 38%,100% 50%,61% 62%,50% 100%,39% 62%,0 50%,39% 38%);background:rgba(246,231,200,.22);transition:background .5s,transform .5s}
+  .progress li.lit{background:var(--c);transform:scale(1.25);filter:drop-shadow(0 0 4px var(--c))}
+  .btn-pill{background:none;border:1px solid rgba(246,231,200,.45);color:inherit;font:inherit;font-size:14px;padding:6px 16px;border-radius:20px;cursor:pointer;transition:.2s;min-height:40px}
+  .btn-pill:hover{background:rgba(246,231,200,.12)}
+
+  .stage{position:relative;width:100%;max-width:1400px;aspect-ratio:var(--ar);border-radius:14px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.55)}
+  .map{position:absolute;inset:0;transition:transform 1s cubic-bezier(.6,.05,.2,1),filter 1s;transform-origin:0 0}
+  .map img{width:100%;height:100%;display:block;user-select:none;-webkit-user-drag:none}
+  body.open .map{filter:brightness(.55) saturate(.9)}
+  canvas#fx{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+
+  /* star clusters overlay */
+  .cstar{position:absolute;width:3.2%;aspect-ratio:1;transform:translate(-50%,-50%);pointer-events:none;border-radius:50%;background:radial-gradient(circle,var(--c) 0%,transparent 65%);opacity:.0;animation:twinkle 3.5s ease-in-out infinite;animation-delay:var(--d)}
+  .cstar.seen{opacity:.9;animation:none;background:radial-gradient(circle,#fff 0%,var(--c) 25%,transparent 68%)}
+  @keyframes twinkle{0%,100%{opacity:.05}50%{opacity:.55}}
+  svg.constellation{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+  svg.constellation path{fill:none;stroke:var(--gold);stroke-width:2;stroke-dasharray:6 8;opacity:.0;transition:opacity 1s;filter:drop-shadow(0 0 4px var(--gold))}
+  svg.constellation path.seg.on{opacity:.75}
+  svg.constellation .fit{stroke:var(--teal);stroke-dasharray:none;stroke-width:2.5;stroke-linecap:round;opacity:0;stroke-dashoffset:2000;transition:stroke-dashoffset 2.2s ease,opacity .3s}
+  body.complete svg.constellation .fit{opacity:.9;stroke-dashoffset:0}
+
+  .spot{position:absolute;display:block;border-radius:40%;color:inherit;text-decoration:none;cursor:pointer;background:none;border:0;font:inherit}
+  .spot::before{content:"";position:absolute;inset:-8%;border-radius:50%;background:radial-gradient(closest-side,rgba(255,206,120,.42),rgba(255,206,120,0));opacity:0;transition:opacity .35s}
+  .spot:hover::before,.spot:focus-visible::before,.spot.active::before,.spot.pulse::before{opacity:1}
+  .label{position:absolute;top:100%;left:50%;transform:translate(-50%,4px);text-align:center;white-space:nowrap;pointer-events:none;padding:2px 10px;border-radius:10px;background:rgba(10,12,30,.45);backdrop-filter:blur(2px);text-shadow:0 1px 4px #000;transition:transform .3s,opacity .5s}
+  .label b{display:block;font-size:clamp(12px,1.6vw,22px);color:#ffeac0;font-weight:600}
+  .label small{display:block;font-size:clamp(10px,.95vw,13px);opacity:0;max-height:0;overflow:hidden;transition:.3s;color:#c6f1ec}
+  .spot:hover .label,.spot:focus-visible .label{transform:translate(-50%,0) scale(1.08)}
+  .spot:hover .label small,.spot:focus-visible .label small{opacity:1;max-height:2em}
+  .spot.seen .label b::after{content:" ✦";color:var(--gold)}
+  body.open .label,body.is-intro .label{opacity:0}
+  @media (hover:none){.label small{opacity:.9;max-height:2em}}
+
+  /* intro */
+  .intro{position:absolute;inset:0;display:grid;place-items:center;text-align:center;background:radial-gradient(ellipse at center,rgba(12,14,34,.55) 0%,rgba(12,14,34,.88) 75%);transition:opacity 1s,visibility 1s;z-index:5;padding:20px}
+  body:not(.is-intro) .intro{opacity:0;visibility:hidden}
+  .intro h2{font-size:clamp(30px,5.5vw,72px);color:#ffeac0;text-shadow:0 0 30px rgba(255,200,110,.45);line-height:1.15;animation:rise 1.4s ease both}
+  .intro p{font-size:clamp(14px,1.6vw,20px);color:var(--muted);max-width:620px;margin:10px auto 22px;animation:rise 1.4s .3s ease both}
+  .start{background:linear-gradient(135deg,#ffd88a,#ffb86b);color:#1a1424;border:0;font:inherit;font-weight:600;font-size:clamp(15px,1.4vw,18px);padding:12px 28px;border-radius:30px;cursor:pointer;box-shadow:0 0 30px rgba(255,200,110,.45);animation:rise 1.4s .6s ease both,glow 2.6s 2s ease-in-out infinite;min-height:48px}
+  .start:hover{transform:translateY(-2px)}
+  .intro .free{display:block;margin-top:12px;font-size:13px;color:var(--muted);background:none;border:0;font-family:inherit;cursor:pointer;text-decoration:underline;text-underline-offset:4px;animation:rise 1.4s .9s ease both}
+  @keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+  @keyframes glow{50%{box-shadow:0 0 50px rgba(255,200,110,.7)}}
+
+  .hint{position:absolute;bottom:3%;left:50%;transform:translateX(-50%);font-size:clamp(12px,1vw,14px);background:rgba(10,12,30,.5);padding:4px 14px;border-radius:20px;pointer-events:none;transition:opacity .4s;white-space:nowrap}
+  body.open .hint,body.is-intro .hint{opacity:0}
+
+  .toast{position:absolute;top:5%;left:50%;transform:translate(-50%,-20px);background:rgba(18,20,43,.92);border:1px solid rgba(127,224,212,.45);color:var(--sand);padding:12px 20px;border-radius:14px;text-align:center;opacity:0;pointer-events:none;transition:.6s;z-index:6;max-width:90%;box-shadow:0 0 30px rgba(127,224,212,.25)}
+  .toast.show{opacity:1;transform:translate(-50%,0);pointer-events:auto}
+  .toast b{color:var(--teal)}
+
+  /* panel */
+  .panel{position:absolute;top:4%;bottom:4%;right:3%;width:min(460px,46%);background:linear-gradient(180deg,rgba(26,29,58,.96),rgba(18,20,43,.97));border:1px solid var(--line);border-radius:16px;box-shadow:0 20px 50px rgba(0,0,0,.5);display:flex;flex-direction:column;opacity:0;visibility:hidden;transform:translateY(16px);transition:opacity .45s .25s,transform .45s .25s,visibility 0s .7s;z-index:4}
+  .panel.left{right:auto;left:3%}
+  body.open .panel{opacity:1;visibility:visible;transform:none;transition:opacity .45s .25s,transform .45s .25s,visibility 0s}
+  .panel-head{display:flex;align-items:center;gap:12px;padding:16px 18px 12px;border-bottom:1px solid var(--line)}
+  .star{width:36px;height:36px;flex-shrink:0;border-radius:50%;display:grid;place-items:center;font-size:18px;background:radial-gradient(circle,var(--c) 0%,transparent 70%);color:#fff}
+  .panel-head h2{font-size:clamp(22px,2vw,28px);line-height:1.15}
+  .panel-head h2:focus{outline:none}
+  .tag{font-size:13px;color:var(--teal)}
+  .close{margin-inline-start:auto;background:none;border:0;color:var(--muted);font-size:22px;cursor:pointer;line-height:1;width:44px;height:44px;border-radius:10px}
+  .close:hover{color:var(--sand);background:rgba(255,255,255,.07)}
+  .panel-body{padding:16px 20px;overflow-y:auto;flex:1;font-size:15.5px;line-height:1.8;scrollbar-width:thin;scrollbar-color:rgba(246,231,200,.25) transparent}
+  .panel-body p{margin-bottom:10px;color:#efe6d6}
+  .panel-foot{display:flex;justify-content:space-between;gap:8px;padding:12px 16px;border-top:1px solid var(--line)}
+  .nav{background:rgba(255,216,138,.09);border:1px solid rgba(255,216,138,.35);color:var(--gold);font:inherit;font-size:14px;padding:8px 14px;border-radius:10px;cursor:pointer;transition:.2s;min-height:44px}
+  .nav:hover{background:rgba(255,216,138,.2)}
+  .nav[disabled]{opacity:.35;cursor:default}
+  .station{display:none}.station.show{display:block;animation:fade .5s}
+  @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+  .card{border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:12px;background:rgba(255,255,255,.03)}
+  .card .h3{font-size:17px;color:var(--gold);margin-bottom:4px;line-height:1.4}
+  .card .meta{font-size:13.5px;color:var(--muted);margin-bottom:8px}
+  .stats{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}
+  .stat{display:inline-flex;align-items:baseline;gap:5px;background:rgba(127,224,212,.08);border:1px solid rgba(127,224,212,.28);border-radius:8px;padding:4px 10px;font-size:13.5px}
+  .stat b{color:var(--teal);font-size:15.5px}
+  .links{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+  .links a{color:#1a1424;background:var(--gold);text-decoration:none;font-size:14px;font-weight:600;padding:8px 14px;border-radius:9px;transition:.2s;display:inline-flex;align-items:center;gap:6px;min-height:40px}
+  .links a.ghost{background:none;color:var(--gold);border:1px solid rgba(255,216,138,.5)}
+  .links a:hover{filter:brightness(1.1);transform:translateY(-1px)}
+  .chips{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 14px;list-style:none}
+  .chip{font-size:13.5px;padding:3px 11px;border-radius:20px;border:1px solid var(--line);background:rgba(255,255,255,.05);direction:ltr}
+  .branch{position:relative;padding-inline-start:16px;margin-bottom:6px}
+  .branch::before{content:"";position:absolute;inset-inline-start:0;top:6px;bottom:6px;width:2px;background:linear-gradient(var(--gold),transparent);border-radius:2px}
+  .branch h4{font-size:14.5px;color:var(--gold);font-weight:600}
+  .timeline{border-inline-start:2px dashed rgba(127,224,212,.4);padding-inline-start:16px;margin-top:6px}
+  .tl{position:relative;margin-bottom:14px}
+  .tl::before{content:"";position:absolute;inset-inline-start:-22px;top:8px;width:10px;height:10px;border-radius:50%;background:var(--teal);box-shadow:0 0 10px var(--teal)}
+  .tl h4{font-size:15px;color:var(--sand);line-height:1.4}
+  .tl>span{font-size:13.5px;color:var(--muted)}
+  .tl p{font-size:14.5px;line-height:1.7}
+  .todo{border:1px dashed rgba(255,216,138,.5);border-radius:10px;padding:10px 12px;color:var(--gold);font-size:14px;background:rgba(255,216,138,.05);margin-top:8px}
+  .contact a{display:flex;align-items:center;gap:10px;color:var(--sand);text-decoration:none;padding:12px 14px;border:1px solid var(--line);border-radius:12px;margin-bottom:10px;transition:.2s;direction:ltr;justify-content:flex-end;min-height:48px}
+  html[lang=en] .contact a{justify-content:flex-start}
+  .contact a:hover{background:rgba(255,216,138,.09);border-color:rgba(255,216,138,.45)}
+  .contact svg{width:20px;height:20px;flex-shrink:0;fill:var(--gold)}
+
+  /* station rail */
+  .rail{width:100%;max-width:1400px;margin-top:14px}
+  .rail ol{display:flex;gap:8px;list-style:none;overflow-x:auto;padding:4px 2px 8px;scrollbar-width:thin}
+  .rail li{flex:1;min-width:120px}
+  .rail button{width:100%;display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.03);border:1px solid var(--line);color:var(--sand);font:inherit;font-size:14px;padding:10px 12px;border-radius:12px;cursor:pointer;transition:.25s;min-height:48px;text-align:start}
+  .rail button:hover{background:rgba(255,216,138,.08);border-color:rgba(255,216,138,.4)}
+  .rail button[aria-current=step]{border-color:var(--gold);background:rgba(255,216,138,.12)}
+  .rail .n{width:24px;height:24px;flex-shrink:0;border-radius:50%;display:grid;place-items:center;font-size:12px;background:rgba(246,231,200,.12)}
+  .rail button.seen .n{background:var(--c);color:#14122a;font-weight:700}
+
+  footer{margin-top:10px;font-size:13px;color:var(--muted);text-align:center}
+
+  @media (max-width:820px){
+    .stage{aspect-ratio:auto}
+    .map{position:relative}
+    .map img{height:auto}
+    .panel{position:fixed;inset:auto 0 0 0!important;top:auto;width:100%;max-height:80vh;border-radius:18px 18px 0 0;transform:translateY(100%);transition:transform .45s,opacity .3s,visibility 0s .45s;z-index:30}
+    body.open .panel{transform:none;transition:transform .45s,opacity .3s,visibility 0s}
+    body.open .map{transform:none!important}
+    .label{display:none}
+    .progress span{display:none}
+    .intro h2{font-size:28px}.intro p{margin:6px auto 12px}
+  }
+  @media (prefers-reduced-motion:reduce){*,*::before,*::after{transition:none!important;animation:none!important}.cstar{opacity:.35}}
+</style>
+</head>
+<body class="is-intro">
+<a class="skip" href="#rail"><span lang="ar">تخطَّ إلى قائمة المحطات</span><span lang="en">Skip to stations list</span></a>
+<header>
+  <div class="brand">
+    <h1 class="serif"><span lang="ar">لمى الحربي</span><span lang="en">Lama Alharbi</span> <span aria-hidden="true" style="color:var(--gold)">✦</span></h1>
+    <p><span lang="ar">طالبة علوم بيانات · جامعة جدة</span><span lang="en">Data Science Student · University of Jeddah</span></p>
+  </div>
+  <div class="tools">
+    <div class="progress" role="status" aria-live="polite">
+      <ol aria-hidden="true"><li style="--c:#ffcf5a"></li><li style="--c:#5fe0cf"></li><li style="--c:#ff7fb0"></li><li style="--c:#b58cff"></li><li style="--c:#ffa94d"></li><li style="--c:#7fb8ff"></li></ol>
+      <span id="progTxt"></span>
+    </div>
+    <button class="btn-pill" id="lang" aria-label="Switch language"><span lang="ar">English</span><span lang="en">عربي</span></button>
+  </div>
+</header>
+
+<main class="stage" style="--ar:1672/941" aria-label="خريطة الرحلة">
+  <div class="map" id="map">
+    <img src="map.jpg" alt="" aria-hidden="true">
+    <span class="cstar" style="left:11.66%;top:46.55%;--c:#ffcf5a;--d:0.0s"></span><span class="cstar" style="left:29.72%;top:36.98%;--c:#5fe0cf;--d:0.6s"></span><span class="cstar" style="left:47.55%;top:19.34%;--c:#ff7fb0;--d:1.2s"></span><span class="cstar" style="left:62.80%;top:27.84%;--c:#b58cff;--d:1.7999999999999998s"></span><span class="cstar" style="left:73.98%;top:10.63%;--c:#ffa94d;--d:2.4s"></span><span class="cstar" style="left:91.51%;top:4.78%;--c:#7fb8ff;--d:3.0s"></span>
+    <svg class="constellation" viewBox="0 0 1672 941" preserveAspectRatio="none" aria-hidden="true"><path class="seg" id="seg0" d="M195 438L497 348"/><path class="seg" id="seg1" d="M497 348L795 182"/><path class="seg" id="seg2" d="M795 182L1050 262"/><path class="seg" id="seg3" d="M1050 262L1237 100"/><path class="seg" id="seg4" d="M1237 100L1530 45"/><path class="fit" pathLength="2000" stroke-dasharray="2000" d="M120 448.3L1610 20.9"/></svg>
+    <canvas id="fx" aria-hidden="true"></canvas>
+    <a class="spot" href="#about" style="left:3.59%;top:53.13%;width:16.45%;height:31.88%" aria-label="عني: البداية: مصدر البيانات"><span class="label" aria-hidden="true"><b>عني</b><small>البداية: مصدر البيانات</small></span></a>
+    <a class="spot" href="#projects" style="left:20.63%;top:40.91%;width:16.75%;height:22.32%" aria-label="المشاريع: تحليل وتنبؤ"><span class="label" aria-hidden="true"><b>المشاريع</b><small>تحليل وتنبؤ</small></span></a>
+    <a class="spot" href="#skills" style="left:35.89%;top:26.57%;width:20.93%;height:20.72%" aria-label="المهارات: شجرة القرار"><span class="label" aria-hidden="true"><b>المهارات</b><small>شجرة القرار</small></span></a>
+    <a class="spot" href="#experience" style="left:57.12%;top:35.07%;width:17.94%;height:13.82%" aria-label="الخبرات: خط المعالجة"><span class="label" aria-hidden="true"><b>الخبرات</b><small>خط المعالجة</small></span></a>
+    <a class="spot" href="#education" style="left:66.39%;top:12.75%;width:16.45%;height:17.00%" aria-label="التعليم: الدراسة والشهادات"><span class="label" aria-hidden="true"><b>التعليم</b><small>الدراسة والشهادات</small></span></a>
+    <a class="spot" href="#contact" style="left:89.11%;top:7.44%;width:6.58%;height:15.94%" aria-label="تواصل: أرسل رسالة"><span class="label" aria-hidden="true"><b>تواصل</b><small>أرسل رسالة</small></span></a>
+    
+  </div>
+
+  <div class="intro" id="intro">
+    <div>
+      <h2 class="serif"><span lang="ar">أهتدي بالبيانات</span><span lang="en">Guided by Data</span></h2>
+      <p><span lang="ar">قبل، كان المسافرون في صحراء نجد يهتدون بالنجوم. أنا أهتدي بالبيانات. هذي رحلتي في ست محطات، وكل محطة تضيء نجمة.</span><span lang="en">Travelers in the Najd desert once found their way by the stars. I find mine by data. This is my journey in six stops, and each stop lights a star.</span></p>
+      <button class="start" id="start"><span lang="ar">ابدأ الرحلة ✦</span><span lang="en">Begin the journey ✦</span></button>
+      <button class="free" id="free"><span lang="ar">أو استكشف الخريطة بحرية</span><span lang="en">or explore the map freely</span></button>
+    </div>
+  </div>
+  <div class="hint" aria-hidden="true"><span lang="ar">✦ اختر أي معلم على الخريطة</span><span lang="en">✦ Choose any landmark on the map</span></div>
+  <div class="toast" id="toast" role="status"><span lang="ar"><b>اكتملت الكوكبة ✦</b> ست نقاط على خط واحد يصعد. شكرًا إنك مشيت الرحلة كاملة!</span><span lang="en"><b>Constellation complete ✦</b> Six points on one rising line. Thanks for walking the whole journey!</span></div>
+
+  <section class="panel" id="panel" role="dialog" aria-modal="false" aria-labelledby="pTitle">
+    <div class="panel-head">
+      <div class="star" id="pStar" aria-hidden="true">✦</div>
+      <div>
+        <div class="tag" id="pTag"></div>
+        <h2 class="serif" id="pTitle" tabindex="-1"></h2>
+      </div>
+      <button class="close" id="close"><span class="sr" lang="ar">إغلاق</span><span class="sr" lang="en">Close</span><span aria-hidden="true">✕</span></button>
+    </div>
+    <div class="panel-body" id="pBody">
+<!-- 1 ABOUT -->
+      <section class="station" data-s="about">
+        <p lang="ar">أهلًا، أنا <b>لمى</b>، طالبة علوم بيانات في جامعة جدة. مثل ما كان المسافرون يهتدون بالنجوم في الصحراء، أنا أهتدي بالبيانات: أنظفها، أستكشفها، أبني منها نماذج، وأعرضها بشكل يفهمه أي أحد.</p>
+        <p lang="en">Hi, I'm <b>Lama</b>, a Data Science student at the University of Jeddah. Like desert travelers once navigated by the stars, I navigate by data: cleaning it, exploring it, modeling it, and presenting it so anyone can understand it.</p>
+        <p lang="ar">أحب المشاريع اللي تبدأ بسؤال حقيقي وتنتهي بشي يقدر الناس يستخدمونه: تطبيق، لوحة، أو أداة.</p>
+        <p lang="en">I love projects that start with a real question and end with something people can actually use: an app, a dashboard, or a tool.</p>
+        <div class="stats">
+          <div class="stat"><b>3</b><span lang="ar">مشاريع</span><span lang="en">projects</span></div>
+          <div class="stat"><b>5</b><span lang="ar">شهادات</span><span lang="en">certifications</span></div>
+          <div class="stat"><b>0.95</b><span lang="ar">ROC-AUC في نموذجي</span><span lang="en">ROC-AUC best model</span></div>
+          <div class="stat"><b>AR · EN</b><span lang="ar">عربي أم، إنجليزي مهني</span><span lang="en">Arabic native, English professional</span></div>
+        </div>
+      </section>
+
+      <!-- 2 PROJECTS -->
+      <section class="station" data-s="projects">
+        <div class="card">
+          <h3 class="h3">🏨 <span lang="ar">التنبؤ بإلغاء حجوزات الفنادق</span><span lang="en">Hotel Cancellation Prediction</span></h3>
+          <div class="meta">Python · scikit-learn · Power BI · Streamlit</div>
+          <p lang="ar">مشروع متكامل على ١١٩ ألف حجز: تنظيف، تحليل استكشافي، مقارنة نماذج بعد إزالة تسرّب البيانات، لوحة Power BI، وتطبيق يتنبأ باحتمال الإلغاء.</p>
+          <p lang="en">End-to-end project on 119K bookings: cleaning, EDA, model comparison after removing data leakage, a Power BI dashboard, and a live app that predicts cancellation risk.</p>
+          <div class="stats">
+            <div class="stat"><b>88.4%</b>Accuracy</div>
+            <div class="stat"><b>0.953</b>ROC-AUC</div>
+            <div class="stat"><b>€16.7M</b><span lang="ar">خسائر محللة</span><span lang="en">lost revenue analyzed</span></div>
+          </div>
+          <div class="links">
+            <a href="https://predict-hotel-cancellations.streamlit.app" target="_blank" rel="noopener"><span lang="ar">جرّب التطبيق</span><span lang="en">Live app</span> ↗</a>
+            <a class="ghost" href="https://github.com/lama-alh/hotel-cancellation-prediction" target="_blank" rel="noopener">GitHub ↗</a>
+          </div>
+        </div>
+        <div class="card">
+          <h3 class="h3">📈 <span lang="ar">وين ارتفعت الأسعار في السعودية؟</span><span lang="en">Where Did Prices Rise in Saudi Arabia?</span></h3>
+          <div class="meta">Power BI · CPI · 2019–2025</div>
+          <p lang="ar">لوحة Power BI تفاعلية تحلل مؤشر أسعار المستهلك في ١٦ مدينة سعودية من ٢٠١٩ إلى ٢٠٢٥، وتجاوب على سؤال واحد: هل ارتفعت الأسعار بالتساوي في كل المدن؟ فيها قيمة ١٠٠ ريال من ٢٠١٩ اليوم لكل مدينة، وترتيب المدن، وخريطة، والتضخم السنوي مقارنة بالمتوسط الوطني.</p>
+          <p lang="en">An interactive Power BI dashboard analyzing the Consumer Price Index across 16 Saudi cities (2019–2025), answering one question: did prices rise equally everywhere? It shows what 100 SAR from 2019 is worth today per city, a city ranking, a map, and annual inflation against the national average.</p>
+          <div class="stats">
+            <div class="stat"><b>16</b><span lang="ar">مدينة</span><span lang="en">cities</span></div>
+            <div class="stat"><b>6</b><span lang="ar">سنوات من البيانات</span><span lang="en">years of data</span></div>
+          </div>
+        </div>
+        <div class="card">
+          <h3 class="h3">📊 <span lang="ar">بيانوس</span><span lang="en">Bayanos</span></h3>
+          <div class="meta">JavaScript · HTML · CSS</div>
+          <p lang="ar">أداة تحوّل ملف Excel أو CSV إلى تقرير منسّق خلال ثوانٍ بالعربي والإنجليزي: مؤشرات، رسوم، وفحص جودة البيانات. والملف ما يطلع من جهازك.</p>
+          <p lang="en">Turns an Excel or CSV file into a finished bilingual report in seconds: KPIs, charts and data-quality checks. Files never leave your browser.</p>
+          <div class="links">
+            <a href="https://lama-alh.github.io/bayanos" target="_blank" rel="noopener"><span lang="ar">جرّب الأداة</span><span lang="en">Live demo</span> ↗</a>
+            <a class="ghost" href="https://github.com/lama-alh/bayanos" target="_blank" rel="noopener">GitHub ↗</a>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3 SKILLS -->
+      <section class="station" data-s="skills">
+        <p lang="ar">مثل شجرة القرار: كل فرع مهارة، وكل ورقة أداة أستخدمها.</p>
+        <p lang="en">Like a decision tree: each branch is a skill, each leaf a tool I use.</p>
+        <div class="branch"><h4><span lang="ar">التحليل والبرمجة</span><span lang="en">Analysis & Programming</span></h4>
+          <div class="chips"><span class="chip">Python</span><span class="chip">pandas</span><span class="chip">NumPy</span><span class="chip">Jupyter / Colab</span><span class="chip">Excel</span><span class="chip">SAS Viya</span></div></div>
+        <div class="branch"><h4><span lang="ar">التعلّم الآلي</span><span lang="en">Machine Learning</span></h4>
+          <div class="chips"><span class="chip">scikit-learn</span><span class="chip">Logistic Regression</span><span class="chip">Random Forest</span><span class="chip">Feature engineering</span><span class="chip">Data leakage checks</span></div></div>
+        <div class="branch"><h4><span lang="ar">التصوير والعرض</span><span lang="en">Visualization</span></h4>
+          <div class="chips"><span class="chip">Power BI</span><span class="chip">Power Query (ETL)</span><span class="chip">Visual design</span><span class="chip">matplotlib</span><span class="chip">seaborn</span></div></div>
+        <div class="branch"><h4><span lang="ar">النشر والويب</span><span lang="en">Deployment & Web</span></h4>
+          <div class="chips"><span class="chip">Streamlit</span><span class="chip">GitHub Pages</span><span class="chip">HTML · CSS · JS</span><span class="chip">Git</span></div></div>
+      </section>
+
+      <!-- 4 EXPERIENCE -->
+      <section class="station" data-s="experience">
+        <p lang="ar">مثل قناة الماء: كل تجربة تنقل الرحلة خطوة للأمام.</p>
+        <p lang="en">Like an aqueduct: every experience moves the journey one step forward.</p>
+        <div class="timeline">
+          <div class="tl">
+            <h4><span lang="ar">عضوة لجنة التصميم · Data Insights</span><span lang="en">Design Committee Member · Data Insights</span></h4>
+            <span lang="ar">أكتوبر ٢٠٢٦ – الآن · دوام جزئي · جدة (هجين)</span><span lang="en">Oct 2026 – Present · Part-time · Jeddah (Hybrid)</span>
+            <p lang="ar" style="margin:4px 0 0">أصمم الهوية البصرية للفعاليات ومنشورات التواصل الاجتماعي لمجتمع Data Insights.</p>
+            <p lang="en" style="margin:4px 0 0">Designing event visuals and social media posts for the Data Insights community.</p>
+          </div>
+          <div class="tl">
+            <h4><span lang="ar">الفريق التنظيمي · هاكاثون تنمية ثون ٢٠٢٦</span><span lang="en">Organizing Team · Tanmia Thon 2026 Hackathon</span></h4>
+            <span lang="ar">نوفمبر ٢٠٢٦ · جامعة جدة</span><span lang="en">Nov 2026 · University of Jeddah</span>
+            <p lang="ar" style="margin:4px 0 0">هاكاثون منطقة مكة المكرمة للتنمية المستدامة. استقبلت المستشارين في اليوم الأول، وفي اليوم الثاني نظّمت الفرق ووجّهتها لين آخر لحظة.</p>
+            <p lang="en" style="margin:4px 0 0">Makkah Region Hackathon for Sustainable Development. Welcomed the mentors on day one, then organized and guided the competing teams on day two.</p>
+          </div>
+          <div class="tl">
+            <h4><span lang="ar">لقاء «ما وراء الأرقام» · الجمعية المهنية للإحصائيين وعلماء البيانات</span><span lang="en">“Beyond the Numbers” talk · PASDS</span></h4>
+            <span lang="ar">أكتوبر ٢٠٢٦ · شهادة حضور</span><span lang="en">Oct 2026 · Certificate of attendance</span>
+            <p lang="ar" style="margin:4px 0 0">لقاء مع د. أيمن المنصوري ضمن فعاليات الجمعية.</p>
+            <p lang="en" style="margin:4px 0 0">A session with Dr. Ayman Al-Mansouri, part of the association's events.</p>
+          </div>
+          <div class="tl">
+            <h4><span lang="ar">مشاريع مستقلة في علوم البيانات</span><span lang="en">Independent data science projects</span></h4>
+            <span lang="ar">٢٠٢٦ · من الفكرة إلى التطبيق المنشور</span><span lang="en">2026 · From idea to deployed app</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- 5 EDUCATION -->
+      <section class="station" data-s="education">
+        <div class="card">
+          <h3 class="h3"><span lang="ar">علوم البيانات · جامعة جدة</span><span lang="en">Data Science · University of Jeddah</span></h3>
+          <div class="meta"><span lang="ar">٢٠٢٣ – ٢٠٢٨ · المستوى السابع حاليًا</span><span lang="en">2023 – 2028 · Currently Level 7</span></div>
+        </div>
+        <h4 style="color:var(--gold);font-size:15px;margin:14px 0 8px"><span lang="ar">الشهادات</span><span lang="en">Certifications</span></h4>
+        <div class="timeline">
+          <div class="tl"><h4>Extract, Transform and Load Data in Power BI</h4><span>Microsoft · <span lang="ar">أكتوبر ٢٠٢٦</span><span lang="en">Oct 2026</span></span></div>
+          <div class="tl"><h4>Harnessing the Power of Data with Power BI</h4><span>Microsoft · <span lang="ar">أكتوبر ٢٠٢٦</span><span lang="en">Oct 2026</span></span></div>
+          <div class="tl"><h4>Preparing Data for Analysis with Microsoft Excel</h4><span>Microsoft · <span lang="ar">سبتمبر ٢٠٢٦</span><span lang="en">Sep 2026</span></span></div>
+          <div class="tl"><h4>SAS Viya Overview</h4><span>SAS · <span lang="ar">فبراير ٢٠٢٦</span><span lang="en">Feb 2026</span></span></div>
+          <div class="tl"><h4>Data Fundamentals</h4><span>IBM · <span lang="ar">مايو ٢٠٢٥</span><span lang="en">May 2025</span></span></div>
+        </div>
+      </section>
+
+      <!-- 6 CONTACT -->
+      <section class="station contact" data-s="contact">
+        <p lang="ar">نهاية الطريق، وبداية حديث. أرسل حمامة 🕊️</p>
+        <p lang="en">The end of the road, and the start of a conversation. Send a pigeon 🕊️</p>
+        <a href="https://www.linkedin.com/in/lama-alharbi-28ab99418" target="_blank" rel="noopener"><svg viewBox="0 0 24 24"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></svg>LinkedIn · Lama Alharbi</a>
+        <a href="mailto:yyyylama2026@gmail.com"><svg viewBox="0 0 24 24"><path d="M20 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zm0 4.2-8 5-8-5V6l8 5 8-5v2.2z"/></svg>yyyylama2026@gmail.com</a>
+        <a href="https://github.com/lama-alh" target="_blank" rel="noopener"><svg viewBox="0 0 24 24"><path d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.7-1.6-2.7-.3-5.5-1.3-5.5-5.9 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0c2.3-1.5 3.3-1.2 3.3-1.2.6 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .3"/></svg>github.com/lama-alh</a>
+      </section>
+
+
+    </div>
+    <div class="panel-foot">
+      <button class="nav" id="prev"><span lang="ar">→ السابقة</span><span lang="en">← Previous</span></button>
+      <button class="nav" id="next"><span lang="ar">المحطة التالية ←</span><span lang="en">Next stop →</span></button>
+    </div>
+  </section>
+</main>
+
+<nav class="rail" id="rail" aria-label="المحطات · Stations" tabindex="-1">
+  <ol><li><button style="--c:#ffcf5a"><span class="n" aria-hidden="true">1</span><span class="t">عني</span></button></li><li><button style="--c:#5fe0cf"><span class="n" aria-hidden="true">2</span><span class="t">المشاريع</span></button></li><li><button style="--c:#ff7fb0"><span class="n" aria-hidden="true">3</span><span class="t">المهارات</span></button></li><li><button style="--c:#b58cff"><span class="n" aria-hidden="true">4</span><span class="t">الخبرات</span></button></li><li><button style="--c:#ffa94d"><span class="n" aria-hidden="true">5</span><span class="t">التعليم</span></button></li><li><button style="--c:#7fb8ff"><span class="n" aria-hidden="true">6</span><span class="t">تواصل</span></button></li></ol>
+</nav>
+<footer><span lang="ar">© ٢٠٢٦ لمى الحربي · صُمّمت كرحلة بيانات تحت سماء نجد</span><span lang="en">© 2026 Lama Alharbi · Designed as a data journey under the Najd sky</span></footer>
+
+<script>
+const ST=[{"k": "about", "ar": "عني", "en": "About", "sub_ar": "البداية: مصدر البيانات", "sub_en": "Where the data begins", "c": "#ffcf5a", "cx": 11.81, "cy": 69.08}, {"k": "projects", "ar": "المشاريع", "en": "Projects", "sub_ar": "تحليل وتنبؤ", "sub_en": "Analysis & prediction", "c": "#5fe0cf", "cx": 29.01, "cy": 52.07}, {"k": "skills", "ar": "المهارات", "en": "Skills", "sub_ar": "شجرة القرار", "sub_en": "My decision tree", "c": "#ff7fb0", "cx": 46.35, "cy": 36.93}, {"k": "experience", "ar": "الخبرات", "en": "Experience", "sub_ar": "خط المعالجة", "sub_en": "The pipeline", "c": "#b58cff", "cx": 66.09, "cy": 41.98}, {"k": "education", "ar": "التعليم", "en": "Education", "sub_ar": "الدراسة والشهادات", "sub_en": "Studies & certifications", "c": "#ffa94d", "cx": 74.61, "cy": 21.25}, {"k": "contact", "ar": "تواصل", "en": "Contact", "sub_ar": "أرسل رسالة", "sub_en": "Send a message", "c": "#7fb8ff", "cx": 92.4, "cy": 15.41}];
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const body=document.body, map=$('#map'), panel=$('#panel');
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const AR='١٢٣٤٥٦';
+let cur=-1, lastTrigger=null, seen=new Set();
+try{JSON.parse(localStorage.getItem('seen')||'[]').forEach(k=>seen.add(k))}catch(e){}
+const L=()=>document.documentElement.lang;
+
+function updateProgress(){
+  ST.forEach((s,i)=>{
+    const on=seen.has(s.k);
+    $$('.progress li')[i].classList.toggle('lit',on);
+    $$('.cstar')[i].classList.toggle('seen',on);
+    $$('.spot')[i].classList.toggle('seen',on);
+    $$('.rail button')[i].classList.toggle('seen',on);
+    const seg=document.getElementById('seg'+i); if(seg) seg.classList.toggle('on',on&&seen.has(ST[i+1].k));
+  });
+  const n=seen.size;
+  $('#progTxt').textContent=L()==='ar'?`أضأت ${AR[n-1]||'٠'} من ٦`:`${n} of 6 stars lit`;
+  if(n===6&&!body.classList.contains('complete')){
+    body.classList.add('complete');
+    const t=$('#toast'); t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),6500);
+  }
+  try{localStorage.setItem('seen',JSON.stringify([...seen]))}catch(e){}
+}
+
+function open(i,trigger){
+  body.classList.remove('is-intro');
+  if(trigger) lastTrigger=trigger;
+  cur=i; const s=ST[i], l=L();
+  body.classList.add('open');
+  $$('.spot').forEach((el,j)=>el.classList.toggle('active',j===i));
+  $$('.rail button').forEach((el,j)=>j===i?el.setAttribute('aria-current','step'):el.removeAttribute('aria-current'));
+  $$('.station').forEach(el=>el.classList.toggle('show',el.dataset.s===s.k));
+  $('#pTitle').textContent=s[l];
+  $('#pTag').textContent=(l==='ar'?`المحطة ${AR[i]} من ٦ · `:`Stop ${i+1} of 6 · `)+s['sub_'+l];
+  $('#pStar').style.setProperty('--c',s.c);
+  if(window.innerWidth>820){
+    const z=1.35, lo=(100-100*z)/z;
+    const fit=right=>{const tgt=right?34:66;
+      const tx=Math.max(Math.min(tgt/z-s.cx,0),lo), ty=Math.max(Math.min(50/z-s.cy,0),lo);
+      return {tx,ty,sx:z*(s.cx+tx)}};
+    let right=l==='ar', f=fit(right);
+    if((right&&f.sx>50)||(!right&&f.sx<50)){right=!right;f=fit(right)}
+    panel.classList.toggle('left',!right);
+    map.style.transform=`scale(${z}) translate(${f.tx}%,${f.ty}%)`;
+  }
+  $('#prev').disabled=i===0; $('#next').disabled=i===ST.length-1;
+  $('#pBody').scrollTop=0;
+  seen.add(s.k); updateProgress();
+  history.replaceState(null,'','#'+s.k);
+  setTimeout(()=>$('#pTitle').focus({preventScroll:true}),reduce?0:350);
+}
+function close(){
+  if(cur<0)return;
+  body.classList.remove('open'); map.style.transform=''; cur=-1;
+  $$('.spot').forEach(el=>el.classList.remove('active'));
+  $$('.rail button').forEach(el=>el.removeAttribute('aria-current'));
+  history.replaceState(null,'',location.pathname);
+  if(lastTrigger) lastTrigger.focus({preventScroll:true});
+}
+function sweep(){ // light landmarks one by one along the path
+  body.classList.remove('is-intro');
+  if(reduce){$$('.spot')[0].focus();return}
+  $$('.spot').forEach((el,i)=>setTimeout(()=>{el.classList.add('pulse');setTimeout(()=>el.classList.remove('pulse'),700)},300+i*260));
+  setTimeout(()=>open(0,$$('.spot')[0]),300+6*260+200);
+}
+
+$$('.spot').forEach((el,i)=>el.addEventListener('click',e=>{e.preventDefault();open(i,el)}));
+$$('.rail button').forEach((el,i)=>el.addEventListener('click',()=>open(i,el)));
+$('#start').onclick=sweep;
+$('#free').onclick=()=>{body.classList.remove('is-intro');$$('.spot')[0].focus()};
+$('#close').onclick=close;
+$('#prev').onclick=()=>cur>0&&open(cur-1);
+$('#next').onclick=()=>cur<ST.length-1&&open(cur+1);
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'){if(cur>=0)close();else if(body.classList.contains('is-intro'))body.classList.remove('is-intro')}
+  if(cur<0||/INPUT|TEXTAREA/.test(e.target.tagName))return;
+  const fwd=L()==='ar'?'ArrowLeft':'ArrowRight', back=L()==='ar'?'ArrowRight':'ArrowLeft';
+  if(e.key===fwd&&cur<ST.length-1)open(cur+1);
+  if(e.key===back&&cur>0)open(cur-1);
+});
+$('#lang').onclick=()=>{
+  const en=L()==='ar';
+  document.documentElement.lang=en?'en':'ar';
+  document.documentElement.dir=en?'ltr':'rtl';
+  document.title=en?'Lama Alharbi · Guided by Data':'لمى الحربي · أهتدي بالبيانات';
+  $('main').setAttribute('aria-label',en?'Journey map':'خريطة الرحلة');
+  $$('.spot').forEach((el,i)=>{el.querySelector('b').textContent=ST[i][en?'en':'ar'];el.querySelector('small').textContent=ST[i][en?'sub_en':'sub_ar'];el.setAttribute('aria-label',`${ST[i][en?'en':'ar']}: ${ST[i][en?'sub_en':'sub_ar']}`)});
+  $$('.rail .t').forEach((el,i)=>el.textContent=ST[i][en?'en':'ar']);
+  updateProgress();
+  if(cur>=0)open(cur);
+};
+
+/* fireflies rising from the well + drifting data motes */
+(function(){
+  if(reduce)return;
+  const c=$('#fx'), x=c.getContext('2d'); let W,H,P=[];
+  const size=()=>{const r=c.getBoundingClientRect();W=c.width=r.width*devicePixelRatio;H=c.height=r.height*devicePixelRatio};
+  size(); addEventListener('resize',size);
+  const spawn=()=>({x:(0.105+Math.random()*0.04)*W,y:0.74*H,vx:(Math.random()-.5)*.25,vy:-(.25+Math.random()*.5),r:(.6+Math.random()*1.6)*devicePixelRatio,life:0,max:220+Math.random()*200});
+  for(let i=0;i<30;i++){const p=spawn();p.life=Math.random()*p.max;p.y-=p.life*.4*H/1000;P.push(p)}
+  (function loop(){
+    x.clearRect(0,0,W,H);
+    P.forEach((p,i)=>{p.life++;p.x+=p.vx+Math.sin(p.life/30)*.25;p.y+=p.vy*H/700;
+      const a=Math.sin(Math.PI*p.life/p.max);
+      x.beginPath();x.arc(p.x,p.y,p.r,0,7);x.fillStyle=`rgba(255,214,120,${a*.85})`;x.shadowColor='#ffcf5a';x.shadowBlur=8*devicePixelRatio;x.fill();
+      if(p.life>p.max)P[i]=spawn();});
+    if(!document.hidden)requestAnimationFrame(loop);else setTimeout(()=>requestAnimationFrame(loop),500);
+  })();
+})();
+
+if(seen.size===6) body.classList.add('complete');
+updateProgress();
+const h=location.hash.slice(1), hi=ST.findIndex(s=>s.k===h); if(hi>=0)open(hi);
+</script>
+</body>
+</html>
